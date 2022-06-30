@@ -47,5 +47,50 @@ RSpec.describe 'Books', type: :request do
         end
       end
     end
+
+    describe 'pagination' do
+      context 'when asking for the first page' do
+        before { get '/api/books?page=1&per=2' }
+        it 'receives HTTP status 200' do
+          expect(response).to have_http_status(:ok)
+        end
+
+        it 'receives only two books' do
+          expect(json_body['data'].size).to eq 2
+        end
+
+        it 'receives a response with the Link header' do
+          expect(response.headers['Link'].split(',').first).to eq '<http://www.example.com/api/books?page=2&per=2>; rel="next"'
+        end
+      end
+
+      context 'when asking for the second page' do
+        before { get '/api/books?page=2&per=2' }
+
+        it 'receives HTTP status 200' do
+          expect(response).to have_http_status(:ok)
+        end
+
+        it 'receives only one book' do
+          expect(json_body['data'].size).to eq 1
+        end
+      end
+
+      context 'when sending invalid "page" and "per" parameters' do
+        before { get '/api/books?page=invalid&per=10'}
+
+        it 'receives HTTP status 400' do
+          expect(response).to have_http_status(:bad_request)
+        end
+
+        it 'receives an error' do
+          expect(json_body['error']).not_to be_nil
+        end
+
+        it 'receives page=fake as invalid parameter' do
+          expect(json_body['error']['invalid_params']).to eq 'page=invalid'
+        end
+      end
+    end
   end
 end
