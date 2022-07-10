@@ -92,5 +92,58 @@ RSpec.describe 'Books', type: :request do
         end
       end
     end
+
+    describe 'sorting' do
+      context 'with valid column name "id"' do
+        it 'sorts the books by id descending' do
+          get '/api/books?sort=id&dir=desc'
+
+          expect(json_body['data'].first['id']).to eq agile_web_dev.id
+          expect(json_body['data'].last['id']).to eq ruby_microscope.id
+        end
+      end
+
+      context 'with invalid column name "fid"' do
+        before { get '/api/books?sort=fid&dir=desc' }
+
+        it 'gets "400 bad request" back' do
+          expect(response).to have_http_status(:bad_request)
+        end
+
+        it 'receives an error' do
+          expect(json_body['error']).not_to be_nil
+        end
+
+        it 'receives "sort=fid" as invalid param' do
+          expect(json_body['error']['invalid_params']).to eq "sort=fid"
+        end
+      end
+    end
+
+    describe 'filtering' do
+      context 'with valid parameter "q[title_cont]=Microscope"' do
+        it 'receives "Ruby under a micrscope back" back' do
+          get '/api/books?q[title_cont]=Microscope'
+          expect(json_body['data'].first['id']).to eq(ruby_microscope.id)
+          expect(json_body['data'].size).to eq 1
+        end
+      end
+
+      context 'with invalid parameter "q[ftitle_cont]=Microscope"' do
+        before { get '/api/books?q[ftitle_cont]=Microscope' }
+
+        it 'gets "400 Bad Request" back' do
+          expect(response.status).to eq 400
+        end
+
+        it 'receives an error' do
+          expect(json_body['error']).to_not eq nil
+        end
+
+        it 'receives "q[ftitle]=Microsope" as an invalid parameter' do
+          expect(json_body['error']['invalid_params']).to eq "q[ftitle_cont]=Microscope"
+        end
+      end
+    end
   end
 end
