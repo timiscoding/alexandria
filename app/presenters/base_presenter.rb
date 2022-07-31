@@ -54,4 +54,19 @@ class BasePresenter
   def as_json(*)
     @data
   end
+
+  def fields
+    FieldPicker.new(self).pick
+  end
+
+  def embeds
+    EmbedPicker.new(self).embed
+  end
+
+  def build(actions)
+    actions.each do |action|
+      send(action)
+    end
+    self
+  end
 end
