@@ -34,5 +34,10 @@ module Alexandria
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    # when user uploads a new image, it gets sent as a long base64 string
+    # we don't want that long string in our logs every time someone uploads
+    # an image so we disable it here
+    config.filter_parameters += [:cover]
   end
 end

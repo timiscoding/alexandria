@@ -1,4 +1,7 @@
 class BasePresenter
+  # to generate URLs for cover images, we need to include this
+  include Rails.application.routes.url_helpers
+
   CLASS_ATTRIBUTES = {
     build_with: :build_attributes,
     related_to: :relations,
