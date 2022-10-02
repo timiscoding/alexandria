@@ -166,6 +166,7 @@ RSpec.describe 'Authors', type: :request do
         before { get '/api/authors/1' }
 
         it 'gets HTTP status 200' do
+          puts authors.inspect
           expect(response).to have_http_status(:ok)
         end
 

@@ -7,7 +7,7 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 require 'webmock/rspec'
-require 'database_cleaner'
+require 'database_cleaner/active_record'
 require 'support/helpers'
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -70,7 +70,7 @@ RSpec.configure do |config|
 
   # Configure database cleaner
   config.before(:suite) do
-    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.strategy = :truncation
     DatabaseCleaner.clean_with(:truncation)
   end
 

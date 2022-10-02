@@ -35,7 +35,7 @@ class BooksController < ApplicationController
   private
 
   def book
-    @book ||= params[:id] ? Book.find_by!(params[:id]) : Book.new(book_params)
+    @book ||= params[:id] ? Book.find_by!(id: params[:id]) : Book.new(book_params)
   end
   alias_method :resource, :book
 
